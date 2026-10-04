@@ -1,0 +1,75 @@
+<!-- choose_bank.html -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body { margin: 0; font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
+               background: #f3f5f9; color: #111827; }
+        main { max-width: 420px; margin: 0 auto; padding: 28px 18px; }
+        h1 { font-size: 22px; margin: 0 0 6px; }
+        p { color: #4b5563; margin: 0 0 18px; line-height: 1.5; }
+        #buttons { display: grid; gap: 10px; }
+        #buttons button { display: flex; align-items: center; gap: 12px; width: 100%;
+               padding: 14px 16px; border: 1px solid #e5e7eb; border-radius: 14px;
+               background: #fff; font-size: 16px; font-weight: 600; cursor: pointer;
+               box-shadow: 0 1px 2px rgba(0,0,0,.04); text-align: left; }
+        #buttons button:hover { border-color: #2563eb; }
+        #buttons button::before { content: ""; width: 34px; height: 34px; border-radius: 10px;
+               background: var(--c, #9ca3af); flex: none; }
+        #status { padding: 14px 16px; background: #fff; border-radius: 14px;
+               border: 1px solid #e5e7eb; color: #111827; }
+        #error { color: #b91c1c; }
+    </style>
+    <title>Выбор банка</title>
+</head>
+<body>
+<main>
+    <h1>Выберите банк для оплаты</h1>
+    <p>Нажмите на банк, которым хотите оплатить.</p>
+
+    <div id="buttons">
+        <button data-bank="tinkoff" style="--c:#ffdd2d">Tinkoff</button>
+        <button data-bank="alfa" style="--c:#ef3124">Альфа-Банк</button>
+        <button data-bank="sber" style="--c:#21a038">Сбербанк</button>
+        <button data-bank="vtb" style="--c:#0a2896">ВТБ</button>
+        <button data-bank="gazprom" style="--c:#0b4ea2">Газпромбанк</button>
+        <button data-bank="ozon" style="--c:#005bff">OZON</button>
+        <button data-bank="wildberries" style="--c:#a73afd">Wildberries</button>
+    </div>
+
+    <p id="error" style="color: red;"></p>
+
+    <noscript>
+        Для работы этой страницы нужен JavaScript. Пожалуйста, включите JavaScript.
+    </noscript>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const errorEl = document.getElementById("error");
+            const parts = window.location.pathname.split("/").filter(Boolean);
+            // /choose-bank/{invoice_id} → ["choose-bank", "{invoice_id}"]
+            if (parts.length < 2 || parts[0] !== "choose-bank") {
+                if (errorEl) errorEl.textContent = "Некорректный формат ссылки.";
+                return;
+            }
+
+            const invoiceId = decodeURIComponent(parts[1]);
+            const container = document.getElementById("buttons");
+
+            container.addEventListener("click", function (e) {
+                const target = e.target;
+                if (target.tagName.toLowerCase() !== "button") return;
+
+                const bank = target.getAttribute("data-bank");
+                if (!bank) return;
+
+                const url = `/open/${encodeURIComponent(bank)}/${encodeURIComponent(invoiceId)}`;
+                window.location.href = url;
+            });
+        });
+    </script>
+</main>
+</body>
+</html>
